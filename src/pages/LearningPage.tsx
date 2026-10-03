@@ -1,6 +1,6 @@
 import { programModules, ModuleIcon } from '@/data/program';
 import { useProgress } from '@/context/ProgressContext';
-import { ArrowRight, Check, Lock } from 'lucide-react';
+import { ArrowRight, Check } from 'lucide-react';
 
 type Props = { onNavigate: (page: string, params?: Record<string, string>) => void };
 
@@ -60,20 +60,20 @@ export default function LearningPage({ onNavigate }: Props) {
   const { completedIds } = useProgress();
 
   return (
-    <div className="max-w-[760px] mx-auto">
-      <div className="mb-7">
-        <h2 className="text-[22px] font-bold tracking-[-0.02em] text-[#17202f]" style={{ fontFamily: 'Manrope, sans-serif' }}>Твой путь обучения</h2>
-        <p className="text-[13px] leading-5 text-slate-500 mt-1">Последовательно проходи модули и осваивай навыки работы с питанием, тренировками и созданием тела твоей мечты</p>
+    <div className="mx-auto w-full max-w-[960px]">
+      <div className="mb-6 sm:mb-8">
+        <h2 className="font-display text-[24px] font-bold tracking-[-0.025em] text-[#17202f] sm:text-[28px]">Твой путь обучения</h2>
+        <p className="mt-1.5 max-w-3xl text-[13px] leading-5 text-slate-500 sm:text-sm sm:leading-6">Последовательно проходи модули и осваивай навыки работы с питанием, тренировками и созданием тела твоей мечты</p>
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-5">
         {programModules.map((mod) => {
           const lessonsDone = mod.lessons.filter((lesson) => completedIds.has(lesson.id)).length;
           const isComplete = mod.lessons.length > 0 && lessonsDone === mod.lessons.length;
           const colors = moduleColors[mod.tone];
           return (
-            <div key={mod.id}
-              className="group cursor-pointer text-left bg-white border border-slate-200/80 rounded-xl overflow-hidden shadow-[0_2px_8px_rgba(15,23,42,0.025)] transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_8px_20px_rgba(15,23,42,0.08)]"
+            <button key={mod.id} type="button"
+              className="group w-full overflow-hidden rounded-xl border border-slate-200/80 bg-white text-left shadow-[0_2px_8px_rgba(15,23,42,0.025)] transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_8px_20px_rgba(15,23,42,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E00000]/40"
               onClick={() => onNavigate('module', { moduleId: mod.id })}>
               <div className={`h-1.5 ${colors.bar}`} />
               <div className="p-4">
@@ -85,14 +85,14 @@ export default function LearningPage({ onNavigate }: Props) {
                   </div>
                   <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold shrink-0 ${colors.badge}`}>Модуль {mod.number}</span>
                 </div>
-                <p className="text-[13px] font-bold text-[#17202f] leading-snug mb-1.5">{mod.title}</p>
-                <p className="text-[11px] leading-[1.5] text-slate-500">{mod.description}</p>
+                <p className="font-display mb-1.5 text-[14px] font-bold leading-snug text-[#17202f] sm:text-[15px]">{mod.title}</p>
+                <p className="text-[12px] leading-[1.55] text-slate-500">{mod.description}</p>
                 <div className="flex items-center justify-between mt-4 text-[11px] text-slate-400">
-                  <span>{mod.lessons.length} уроков</span>
-                  <span className={`flex items-center gap-1 font-semibold opacity-70 group-hover:opacity-100 transition ${colors.action}`}>Открыть <ArrowRight size={12} /></span>
+                  <span>{mod.lessons.length ? `${mod.lessons.length} уроков` : 'Уроки готовятся'}</span>
+                  <span className={`flex items-center gap-1 font-semibold opacity-70 group-hover:opacity-100 transition ${colors.action}`}>Подробнее <ArrowRight size={12} /></span>
                 </div>
               </div>
-            </div>
+            </button>
           );
         })}
       </div>

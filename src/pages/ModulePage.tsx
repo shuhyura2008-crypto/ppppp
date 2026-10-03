@@ -25,19 +25,21 @@ export default function ModulePage({ moduleId, onNavigate }: Props) {
   const colors = moduleColors[mod.tone];
 
   return (
-    <div className="max-w-[760px] mx-auto">
+    <div className="mx-auto w-full max-w-[900px]">
       <button onClick={() => onNavigate('learning')} className="flex items-center gap-1.5 text-[12px] text-slate-500 hover:text-[#E00000] mb-5 transition">
         <ChevronLeft size={14} /> Все модули
       </button>
 
-      <div className={`${colors.header} rounded-xl p-5 sm:p-6 text-white mb-5 shadow-[0_8px_20px_rgba(15,23,42,0.12)]`}>
-        <div className="flex items-start justify-between gap-4">
+      <div className={`${colors.header} mb-5 rounded-xl p-5 text-white shadow-[0_8px_20px_rgba(15,23,42,0.12)] sm:p-7`}>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <span className="text-[10px] font-bold uppercase tracking-widest text-white/70">Модуль {mod.number}</span>
-            <h2 className="text-[19px] font-bold mt-1" style={{ fontFamily: 'Manrope, sans-serif' }}>{mod.title}</h2>
-            <p className="text-[12px] text-white/80 mt-1.5 max-w-xl leading-relaxed">{mod.description}</p>
+            <h2 className="font-display mt-1 text-[20px] font-bold leading-tight sm:text-[24px]">{mod.title}</h2>
+            <p className="mt-2 max-w-2xl text-[13px] leading-5 text-white/80 sm:text-sm sm:leading-6">{mod.description}</p>
           </div>
-          <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold shrink-0 whitespace-nowrap">{done}/{mod.lessons.length}</span>
+          <span className="w-fit shrink-0 whitespace-nowrap rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold">
+            {mod.lessons.length ? `${done}/${mod.lessons.length}` : 'Скоро'}
+          </span>
         </div>
         {mod.lessons.length > 0 && (
           <div className="flex items-center gap-4 mt-5 text-[11px] text-white/75">
@@ -47,7 +49,17 @@ export default function ModulePage({ moduleId, onNavigate }: Props) {
         )}
       </div>
 
-      <div className="space-y-2">
+      {mod.lessons.length === 0 ? (
+        <div className="soft-card flex min-h-[260px] flex-col items-center justify-center px-6 py-12 text-center sm:min-h-[320px]">
+          <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-500">
+            <BookOpen size={25} strokeWidth={1.8} />
+          </div>
+          <h3 className="font-display text-base font-bold text-[#17202f]">Уроки скоро появятся</h3>
+          <p className="mt-2 max-w-sm text-sm leading-6 text-slate-500">
+            Материалы этого модуля готовятся к публикации.
+          </p>
+        </div>
+      ) : <div className="space-y-2">
         {mod.lessons.map((lesson, index) => {
           const completed = completedIds.has(lesson.id);
           return (
@@ -65,7 +77,7 @@ export default function ModulePage({ moduleId, onNavigate }: Props) {
             </button>
           );
         })}
-      </div>
+      </div>}
     </div>
   );
 }

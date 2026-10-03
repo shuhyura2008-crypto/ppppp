@@ -19,9 +19,9 @@ export default function ProgressPage() {
   const { profile } = useAuth();
 
   const total = allLessons.length;
-  const done = completedIds.size;
+  const done = allLessons.filter((lesson) => completedIds.has(lesson.id)).length;
   const pct = total ? Math.round((done / total) * 100) : 0;
-  const completedModules = programModules.filter((m) => m.lessons.every((l) => completedIds.has(l.id)));
+  const completedModules = programModules.filter((m) => m.lessons.length > 0 && m.lessons.every((l) => completedIds.has(l.id)));
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -63,7 +63,7 @@ export default function ProgressPage() {
         </div>
         {programModules.map((mod) => {
           const modDone = mod.lessons.filter((l) => completedIds.has(l.id)).length;
-          const modPct = Math.round((modDone / mod.lessons.length) * 100);
+          const modPct = mod.lessons.length ? Math.round((modDone / mod.lessons.length) * 100) : 0;
           return (
             <div key={mod.id} className="px-6 py-4 border-b last:border-0 border-slate-50">
               <div className="flex items-center justify-between mb-2">
@@ -73,11 +73,11 @@ export default function ProgressPage() {
                   </div>
                   <span className="text-sm font-medium text-[#17202f]">{mod.title}</span>
                 </div>
-                <span className="text-xs font-semibold text-slate-500">{modDone}/{mod.lessons.length}</span>
+                <span className="text-xs font-semibold text-slate-500">{mod.lessons.length ? `${modDone}/${mod.lessons.length}` : 'Скоро'}</span>
               </div>
-              <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+              {mod.lessons.length > 0 && <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
                 <div style={{ width: `${modPct}%` }} className={`h-full rounded-full bg-gradient-to-r ${toneGradient[mod.tone]} transition-all duration-500`} />
-              </div>
+              </div>}
             </div>
           );
         })}

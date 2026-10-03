@@ -1,5 +1,6 @@
 import { programModules } from '@/data/program';
 import { useProgress } from '@/context/ProgressContext';
+import YouTubePlayer from '@/components/YouTubePlayer';
 import { ChevronLeft, ChevronRight, Download, CheckCircle, Circle, Clock } from 'lucide-react';
 
 type Props = {
@@ -21,7 +22,7 @@ export default function LessonPage({ moduleId, lessonId, onNavigate }: Props) {
   const completed = completedIds.has(lesson.id);
 
   return (
-    <div className="max-w-[760px] mx-auto">
+    <div className="mx-auto w-full max-w-[900px]">
       <button onClick={() => onNavigate('module', { moduleId: mod.id })}
         className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#E00000] font-medium mb-6 transition">
         <ChevronLeft size={16} /> Назад к модулю
@@ -33,7 +34,9 @@ export default function LessonPage({ moduleId, lessonId, onNavigate }: Props) {
         <span className="text-xs text-slate-400 flex items-center gap-1"><Clock size={11} />{lesson.duration}</span>
       </div>
 
-      <h2 className="text-2xl font-bold text-[#17202f] mb-6" style={{ fontFamily: 'Manrope, sans-serif' }}>{lesson.title}</h2>
+      <h2 className="font-display mb-5 text-[24px] font-bold leading-tight text-[#17202f] sm:mb-6 sm:text-[30px]">{lesson.title}</h2>
+
+      <YouTubePlayer url={lesson.youtubeUrl} title={lesson.title} />
 
       {/* Lesson text */}
       <div className="soft-card p-5 mb-4">
@@ -42,13 +45,13 @@ export default function LessonPage({ moduleId, lessonId, onNavigate }: Props) {
       </div>
 
       {/* Material */}
-      <div className="soft-card p-4 mb-7 flex items-center gap-3">
+      {lesson.material && <div className="soft-card mb-7 flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
         <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
           <Download size={16} className="text-[#E00000]" />
         </div>
-        <span className="text-sm text-slate-700 font-medium flex-1">{lesson.material}</span>
-        <button className="quiet-button text-xs px-3 py-1.5 text-[#E00000]">Скачать</button>
-      </div>
+        <span className="flex-1 text-sm font-medium text-slate-700">{lesson.material.label}</span>
+        <a href={lesson.material.url} className="quiet-button w-full px-3 py-2 text-xs text-[#E00000] sm:w-auto" download>Скачать</a>
+      </div>}
 
       {/* Complete button */}
       <div className="flex items-center justify-between gap-4 mb-8">
@@ -68,7 +71,7 @@ export default function LessonPage({ moduleId, lessonId, onNavigate }: Props) {
       </div>
 
       {/* Prev / Next navigation */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <button
           disabled={!prevLesson}
           onClick={() => prevLesson && onNavigate('lesson', { moduleId: mod.id, lessonId: prevLesson.id })}

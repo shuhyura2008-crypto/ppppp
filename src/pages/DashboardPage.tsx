@@ -22,15 +22,16 @@ export default function DashboardPage({ onNavigate }: Props) {
   const { completedIds } = useProgress();
 
   const totalLessons = allLessons.length;
-  const completedCount = completedIds.size;
+  const completedCount = allLessons.filter((lesson) => completedIds.has(lesson.id)).length;
   const pct = totalLessons ? Math.round((completedCount / totalLessons) * 100) : 0;
 
-  const activeModule = programModules.find((m) => m.lessons.some((l) => !completedIds.has(l.id)))
-    ?? programModules[programModules.length - 1];
+  const modulesWithLessons = programModules.filter((module) => module.lessons.length > 0);
+  const activeModule = modulesWithLessons.find((module) => module.lessons.some((lesson) => !completedIds.has(lesson.id)))
+    ?? modulesWithLessons[0];
 
   const name = profile?.full_name ?? user?.email?.split('@')[0] ?? 'Участница';
   const firstName = name.split(' ')[0];
-  const nextLesson = activeModule.lessons.find((l) => !completedIds.has(l.id));
+  const nextLesson = activeModule?.lessons.find((lesson) => !completedIds.has(lesson.id));
 
   return (
     <div className="space-y-6 max-w-[760px] mx-auto">
@@ -49,7 +50,7 @@ export default function DashboardPage({ onNavigate }: Props) {
             {[
               { icon: <BookOpen size={16} />, value: `${completedCount}/${totalLessons}`, label: 'уроков пройдено' },
               { icon: <TrendingUp size={16} />, value: `${pct}%`, label: 'прогресс' },
-              { icon: <Zap size={16} />, value: `${activeModule.number}/${programModules.length}`, label: 'модуль' },
+              { icon: <Zap size={16} />, value: activeModule ? `${activeModule.number}/${programModules.length}` : '—', label: 'модуль' },
             ].map((stat, i) => (
               <div key={i} className="rounded-xl bg-white/15 backdrop-blur-sm px-3 py-3 text-center">
                 <div className="flex justify-center text-white/70 mb-1">{stat.icon}</div>
@@ -60,7 +61,7 @@ export default function DashboardPage({ onNavigate }: Props) {
           </div>
 
           {nextLesson && (
-            <button onClick={() => onNavigate('lesson', { moduleId: activeModule.id, lessonId: nextLesson.id })}
+            <button onClick={() => activeModule && onNavigate('lesson', { moduleId: activeModule.id, lessonId: nextLesson.id })}
               className="w-full flex items-center gap-3 rounded-xl bg-white text-[#B80000] px-4 py-3 font-semibold text-[13px] transition hover:bg-red-50 active:scale-[.98]">
               <PlayCircle size={20} className="shrink-0" />
               <span className="truncate flex-1 text-left">Продолжить: {nextLesson.title}</span>
@@ -92,7 +93,7 @@ export default function DashboardPage({ onNavigate }: Props) {
           {programModules.map((mod) => {
             const done = mod.lessons.filter((l) => completedIds.has(l.id)).length;
             const mpct = mod.lessons.length ? Math.round((done / mod.lessons.length) * 100) : 0;
-            const isActive = mod.id === activeModule.id;
+            const isActive = mod.id === activeModule?.id;
             return (
               <button key={mod.id} onClick={() => onNavigate('module', { moduleId: mod.id })}
                 className={`bg-white border rounded-xl p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md hover:border-[#f2b3b3] ${isActive ? 'border-[#E00000]/25 ring-1 ring-[#E00000]/20' : 'border-slate-200/80'}`}>
@@ -101,10 +102,11 @@ export default function DashboardPage({ onNavigate }: Props) {
                 </div>
                 <p className="text-[11px] font-bold text-slate-700 line-clamp-2 leading-snug mb-2">{mod.title}</p>
                 {isActive && <span className="text-[9px] font-bold text-[#E00000] bg-red-50 rounded-full px-1.5 py-0.5 mb-2 inline-block">Текущий</span>}
-                <div className="h-1 rounded-full bg-slate-100 overflow-hidden">
+                {mod.lessons.length > 0 ? <><div className="h-1 rounded-full bg-slate-100 overflow-hidden">
                   <div style={{ width: `${mpct}%` }} className="h-full rounded-full bg-[#E00000] transition-all duration-500" />
                 </div>
                 <p className="mt-1.5 text-[10px] text-slate-400">{done}/{mod.lessons.length}</p>
+                </> : <p className="mt-1.5 text-[10px] font-medium text-slate-400">Скоро</p>}
               </button>
             );
           })}
