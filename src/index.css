@@ -5,12 +5,16 @@
 
 :root { font-family: 'DM Sans', sans-serif; color: #17202f; background: #f7f9fc; font-synthesis: none; }
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; }
+html { overflow-x: hidden; }
+body { margin: 0; min-width: 320px; overflow-x: hidden; }
+img, video, iframe { max-width: 100%; }
 button, input { font: inherit; }
 button { cursor: pointer; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid rgba(224, 0, 0, .48); outline-offset: 2px; }
 ::selection { background: #ffe3e3; color: #b00000; }
 
 @layer components {
+  .font-display { font-family: 'Manrope', sans-serif; }
   .soft-card { @apply rounded-[12px] border border-slate-200/80 bg-white shadow-[0_2px_10px_rgba(26,47,79,0.035)]; }
   .blue-button { @apply inline-flex items-center justify-center gap-2 rounded-lg bg-[#E00000] px-5 py-3 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(224,0,0,0.18)] transition hover:-translate-y-0.5 hover:bg-[#B80000] active:translate-y-0; }
   .quiet-button { @apply inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-[#f0aaaa] hover:bg-[#fff5f5] hover:text-[#B80000]; }

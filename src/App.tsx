@@ -10,11 +10,12 @@ import LessonPage from '@/pages/LessonPage';
 import ProgressPage from '@/pages/ProgressPage';
 import MaterialsPage from '@/pages/MaterialsPage';
 import ProfilePage from '@/pages/ProfilePage';
+import AccessPendingPage from '@/pages/AccessPendingPage';
 
 type NavState = { page: string; params: Record<string, string> };
 
 function AppShell() {
-  const { session, loading } = useAuth();
+  const { session, courseAccess, loading } = useAuth();
   const [nav, setNav] = useState<NavState>({ page: 'learning', params: {} });
 
   const navigate = (page: string, params: Record<string, string> = {}) => setNav({ page, params });
@@ -32,6 +33,15 @@ function AppShell() {
 
   if (!session) return <AuthPage />;
 
+  const accessExpired = Boolean(
+    courseAccess?.access_expires_at
+      && new Date(courseAccess.access_expires_at).getTime() <= Date.now(),
+  );
+
+  if (!courseAccess?.is_approved || accessExpired) {
+    return <AccessPendingPage expired={accessExpired} />;
+  }
+
   const renderContent = () => {
     switch (nav.page) {
       case 'dashboard': return <DashboardPage onNavigate={navigate} />;
@@ -47,10 +57,10 @@ function AppShell() {
 
   return (
     <ProgressProvider>
-      <div className="flex min-h-screen bg-[#f7f9fc]">
+      <div className="flex min-h-screen min-w-0 bg-[#f7f9fc]">
         <Sidebar activePage={nav.page} onNavigate={navigate} />
-        <main className="flex-1 overflow-auto">
-          <div className="px-4 sm:px-8 pt-20 pb-12 lg:pt-8 lg:px-10 max-w-5xl">
+        <main className="min-w-0 flex-1 overflow-x-hidden">
+          <div className="mx-auto w-full max-w-[1180px] px-4 pb-10 pt-[76px] sm:px-6 sm:pb-14 lg:px-10 lg:pt-10">
             {renderContent()}
           </div>
         </main>
