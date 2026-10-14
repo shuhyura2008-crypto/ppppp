@@ -21,7 +21,8 @@ export default function ModulePage({ moduleId, onNavigate }: Props) {
   if (!mod) return <div className="p-8 text-center text-slate-400">Модуль не найден.</div>;
 
   const done = mod.lessons.filter((lesson) => completedIds.has(lesson.id)).length;
-  const totalMinutes = mod.lessons.reduce((sum, lesson) => sum + parseInt(lesson.duration), 0);
+  const totalMinutes = mod.lessons.reduce((sum, lesson) => sum + (Number.parseInt(lesson.duration ?? '', 10) || 0), 0);
+  const hasDurations = mod.lessons.some((lesson) => lesson.duration);
   const colors = moduleColors[mod.tone];
 
   return (
@@ -44,7 +45,7 @@ export default function ModulePage({ moduleId, onNavigate }: Props) {
         {mod.lessons.length > 0 && (
           <div className="flex items-center gap-4 mt-5 text-[11px] text-white/75">
             <span className="flex items-center gap-1"><BookOpen size={13} /> {mod.lessons.length} уроков</span>
-            <span className="flex items-center gap-1"><Clock size={13} /> {totalMinutes} мин</span>
+            {hasDurations && <span className="flex items-center gap-1"><Clock size={13} /> {totalMinutes} мин</span>}
           </div>
         )}
       </div>
@@ -72,7 +73,7 @@ export default function ModulePage({ moduleId, onNavigate }: Props) {
                 <p className={`text-[12px] font-semibold truncate ${completed ? 'text-slate-400 line-through' : `text-[#17202f] ${colors.hover}`}`}>{lesson.title}</p>
                 <p className="text-[11px] text-slate-400 truncate mt-0.5">{lesson.description}</p>
               </div>
-              <span className="text-[11px] text-slate-400 shrink-0 flex items-center gap-1"><Clock size={12} /> {lesson.duration}</span>
+              {lesson.duration && <span className="text-[11px] text-slate-400 shrink-0 flex items-center gap-1"><Clock size={12} /> {lesson.duration}</span>}
               <ChevronRight size={14} className="text-slate-300 group-hover:text-[#E00000] shrink-0" />
             </button>
           );

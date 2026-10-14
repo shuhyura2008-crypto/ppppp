@@ -15,7 +15,7 @@ import AccessPendingPage from '@/pages/AccessPendingPage';
 type NavState = { page: string; params: Record<string, string> };
 
 function AppShell() {
-  const { session, courseAccess, loading } = useAuth();
+  const { session, courseAccess, accessCheckFailed, loading } = useAuth();
   const [nav, setNav] = useState<NavState>({ page: 'learning', params: {} });
 
   const navigate = (page: string, params: Record<string, string> = {}) => setNav({ page, params });
@@ -38,8 +38,8 @@ function AppShell() {
       && new Date(courseAccess.access_expires_at).getTime() <= Date.now(),
   );
 
-  if (!courseAccess?.is_approved || accessExpired) {
-    return <AccessPendingPage expired={accessExpired} />;
+  if (accessCheckFailed || !courseAccess?.is_approved || accessExpired) {
+    return <AccessPendingPage expired={accessExpired} checkFailed={accessCheckFailed} />;
   }
 
   const renderContent = () => {

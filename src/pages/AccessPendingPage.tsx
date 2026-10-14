@@ -4,9 +4,10 @@ import { useAuth } from '@/context/AuthContext';
 
 type AccessPendingPageProps = {
   expired?: boolean;
+  checkFailed?: boolean;
 };
 
-export default function AccessPendingPage({ expired = false }: AccessPendingPageProps) {
+export default function AccessPendingPage({ expired = false, checkFailed = false }: AccessPendingPageProps) {
   const { user, refreshAccess, signOut } = useAuth();
   const [checking, setChecking] = useState(false);
 
@@ -27,12 +28,14 @@ export default function AccessPendingPage({ expired = false }: AccessPendingPage
             </div>
 
             <h1 className="mt-6 font-display text-[28px] font-extrabold leading-tight text-[#17202f] sm:text-[34px]">
-              {expired ? 'Доступ приостановлен' : 'Аккаунт создан'}
+              {expired ? 'Доступ приостановлен' : checkFailed ? 'Не удалось проверить доступ' : 'Доступ ожидает подтверждения'}
             </h1>
             <p className="mx-auto mt-3 max-w-[460px] text-[15px] leading-7 text-slate-500 sm:text-base">
               {expired
                 ? 'Свяжитесь с организатором программы, чтобы продлить доступ к материалам.'
-                : 'Мы проверяем участие в программе. После подтверждения здесь откроются уроки, эфиры и ваш прогресс.'}
+                : checkFailed
+                  ? 'Не удалось связаться с сервисом доступа. Попробуйте проверить ещё раз через минуту.'
+                  : 'После подтверждения участия здесь откроются уроки и ваш прогресс.'}
             </p>
 
             {user?.email && (

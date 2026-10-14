@@ -31,12 +31,18 @@ export default function LessonPage({ moduleId, lessonId, onNavigate }: Props) {
       <div className="flex items-center gap-2 flex-wrap mb-3">
         <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Модуль {mod.number}</span>
         <span className="text-slate-200">·</span>
-        <span className="text-xs text-slate-400 flex items-center gap-1"><Clock size={11} />{lesson.duration}</span>
+        {lesson.duration && <span className="text-xs text-slate-400 flex items-center gap-1"><Clock size={11} />{lesson.duration}</span>}
       </div>
 
       <h2 className="font-display mb-5 text-[24px] font-bold leading-tight text-[#17202f] sm:mb-6 sm:text-[30px]">{lesson.title}</h2>
 
-      <YouTubePlayer url={lesson.youtubeUrl} title={lesson.title} />
+      {lesson.youtubeUrl ? <YouTubePlayer url={lesson.youtubeUrl} title={lesson.title} /> : (
+        <div className="soft-card mb-4 p-5 text-sm text-slate-600">Материал урока доступен ниже в формате PDF.</div>
+      )}
+
+      {lesson.imageUrl && <div className="soft-card mb-4 overflow-hidden p-2 sm:p-3">
+        <img src={lesson.imageUrl} alt={`Иллюстрация к уроку «${lesson.title}»`} className="mx-auto max-h-[720px] w-full rounded-lg object-contain" />
+      </div>}
 
       {/* Lesson text */}
       <div className="soft-card p-5 mb-4">

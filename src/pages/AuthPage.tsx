@@ -10,11 +10,12 @@ export default function AuthPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [canResendConfirmation, setCanResendConfirmation] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const readableError = (value: string) => {
     const message = value.toLowerCase();
-    if (message.includes('invalid login credentials')) return 'Неверный email или пароль.';
+    if (message.includes('invalid login credentials')) return 'Не удалось войти. Проверь email и пароль. Если аккаунта ещё нет, нажми «Зарегистрироваться».';
     if (message.includes('email not confirmed')) return 'Сначала подтвердите email по ссылке из письма.';
     if (message.includes('user already registered')) return 'Аккаунт с таким email уже существует.';
     if (message.includes('password should be')) return 'Пароль должен содержать не менее 6 символов.';
@@ -26,6 +27,7 @@ export default function AuthPage() {
     e.preventDefault();
     setError('');
     setMessage('');
+    setCanResendConfirmation(false);
 
     if (!isSupabaseConfigured) {
       setError(supabaseConfigError ?? 'Сервис аккаунтов не настроен.');
@@ -48,7 +50,8 @@ export default function AuthPage() {
         return;
       }
       if (!data.session) {
-        setMessage('Аккаунт создан. Подтвердите email по ссылке из письма, затем войдите.');
+        setMessage('Запрос на регистрацию принят. Если письмо отправлено, ссылка для подтверждения придёт на email. Проверьте также папку «Спам».');
+        setCanResendConfirmation(true);
       }
     } else {
       const { error: signInErr } = await supabase.auth.signInWithPassword({
@@ -60,6 +63,23 @@ export default function AuthPage() {
         setLoading(false);
         return;
       }
+    }
+    setLoading(false);
+  };
+
+  const resendConfirmation = async () => {
+    setError('');
+    setMessage('');
+    setLoading(true);
+    const { error: resendError } = await supabase.auth.resend({
+      type: 'signup',
+      email: email.trim(),
+      options: { emailRedirectTo: window.location.origin },
+    });
+    if (resendError) {
+      setError(readableError(resendError.message));
+    } else {
+      setMessage('Запрос на повторную отправку принят. Проверьте входящие и папку «Спам».');
     }
     setLoading(false);
   };
@@ -102,6 +122,10 @@ export default function AuthPage() {
               className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-[13px] text-slate-800 outline-none placeholder-slate-400 transition focus:border-[#E00000] focus:bg-white focus:ring-2 focus:ring-[#E00000]/15" />
             {message && <p className="rounded-lg bg-emerald-50 border border-emerald-100 px-3 py-2 text-xs text-emerald-700">{message}</p>}
             {error && <p className="rounded-lg bg-red-50 border border-red-100 px-3 py-2 text-xs text-red-600">{error}</p>}
+            {canResendConfirmation && <button type="button" disabled={loading || !isSupabaseConfigured} onClick={resendConfirmation}
+              className="text-left text-xs font-semibold text-[#E00000] hover:underline disabled:opacity-60">
+              {loading ? 'Отправляем…' : 'Отправить письмо ещё раз'}
+            </button>}
             <button type="submit" disabled={loading || !isSupabaseConfigured}
               className="blue-button w-full py-2.5 text-[13px] mt-1 disabled:opacity-60 disabled:cursor-not-allowed">
               {loading ? 'Загрузка...' : mode === 'login' ? 'Войти' : 'Создать аккаунт'}

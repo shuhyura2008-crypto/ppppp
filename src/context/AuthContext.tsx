@@ -16,6 +16,7 @@ type AuthCtx = {
   user: User | null;
   profile: Profile | null;
   courseAccess: CourseAccess | null;
+  accessCheckFailed: boolean;
   loading: boolean;
   refreshProfile: () => Promise<void>;
   refreshAccess: () => Promise<void>;
@@ -27,6 +28,7 @@ const AuthContext = createContext<AuthCtx>({
   user: null,
   profile: null,
   courseAccess: null,
+  accessCheckFailed: false,
   loading: true,
   refreshProfile: async () => { },
   refreshAccess: async () => { },
@@ -37,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [courseAccess, setCourseAccess] = useState<CourseAccess | null>(null);
+  const [accessCheckFailed, setAccessCheckFailed] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = useCallback(async (userId: string) => {
@@ -54,13 +57,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [session, fetchProfile]);
 
   const fetchAccess = useCallback(async (userId: string) => {
+    setAccessCheckFailed(false);
     const { data, error } = await supabase
       .from('course_access')
       .select('is_approved, approved_at, access_expires_at')
       .eq('user_id', userId)
       .maybeSingle();
 
-    if (!error) setCourseAccess(data ?? null);
+    if (error) {
+      setCourseAccess(null);
+      setAccessCheckFailed(true);
+      return;
+    }
+
+    setCourseAccess(data ?? null);
   }, []);
 
   const refreshAccess = useCallback(async () => {
@@ -100,6 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setProfile(null);
         setCourseAccess(null);
+        setAccessCheckFailed(false);
         setLoading(false);
       }
     });
@@ -115,6 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setProfile(null);
     setCourseAccess(null);
+    setAccessCheckFailed(false);
   }, []);
 
   return (
@@ -123,6 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user: session?.user ?? null,
       profile,
       courseAccess,
+      accessCheckFailed,
       loading,
       refreshProfile,
       refreshAccess,
