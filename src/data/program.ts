@@ -68,7 +68,26 @@ export const programModules: ProgramModule[] = [
   {
     id: 'module-2', number: 2, icon: 'run', tone: 'mint', title: 'Фундамент похудения и техника упражнений',
     description: 'Поставишь идеальную технику движений, защитишь суставы от травм и начнёшь тренироваться осознанно',
-    lessons: [],
+    lessons: [
+      {
+        id: 'lesson-2-1',
+        title: 'Основы похудения',
+        description: 'Разберём важные моменты, узнаем, как жир уходит из организма, и изучим правила дефицита калорий.',
+        duration: '',
+        text: 'В этом уроке разберём основы похудения: важные моменты, как жир уходит из организма и как соблюдать дефицит калорий.',
+        youtubeUrl: 'https://youtu.be/PBKKcT09DH0',
+        material: { label: 'Основы похудения — PDF', url: '/lessons/osnovy-pohudeniya.pdf' },
+      },
+      {
+        id: 'lesson-2-2',
+        title: 'Основы массонабора',
+        description: 'Как увеличить калораж и не набрать жир вместо мышц.',
+        duration: '',
+        text: 'Разберём, как постепенно увеличить калораж, чтобы поддержать рост мышц и не набирать лишний жир.',
+        youtubeUrl: 'https://youtu.be/HGbbS8afVpU',
+        material: { label: 'Основы массонабора — PDF', url: '/lessons/osnovy-massonabora.pdf' },
+      },
+    ],
   },
   {
     id: 'module-3', number: 3, icon: 'plate', tone: 'peach', title: 'Управление питанием без стресса и срывов',
