@@ -87,6 +87,15 @@ export const programModules: ProgramModule[] = [
         youtubeUrl: 'https://youtu.be/HGbbS8afVpU',
         material: { label: 'Основы массонабора — PDF', url: '/lessons/osnovy-massonabora.pdf' },
       },
+      {
+        id: 'lesson-2-3',
+        title: 'Тренировочный план и техника упражнений',
+        description: 'План тренировок и техника выполнения каждого упражнения.',
+        duration: '',
+        text: 'Посмотри видео с разбором тренировочного плана и техники каждого упражнения. PDF с планом можно скачать ниже.',
+        youtubeUrl: 'https://youtu.be/qbD23banqN0',
+        material: { label: 'План тренировок — PDF', url: '/lessons/plan-trenirovok.pdf' },
+      },
     ],
   },
   {
