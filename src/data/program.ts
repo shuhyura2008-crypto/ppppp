@@ -101,7 +101,26 @@ export const programModules: ProgramModule[] = [
   {
     id: 'module-3', number: 3, icon: 'plate', tone: 'peach', title: 'Управление питанием без стресса и срывов',
     description: 'Забудешь про жёсткие диеты, начнёшь есть досыта и при этом худеть',
-    lessons: [],
+    lessons: [
+      {
+        id: 'lesson-3-1',
+        title: 'Продуктовая корзина',
+        description: 'Разберём категории продуктов, как их выбирать и в каком соотношении.',
+        duration: '',
+        text: 'Посмотри урок о категориях продуктов: как выбирать продукты и сочетать их в рационе. PDF с материалом можно скачать ниже.',
+        youtubeUrl: 'https://youtu.be/i1HMDsjxHcw',
+        material: { label: 'Продуктовая корзина — PDF', url: '/lessons/produktovaya-korzina.pdf' },
+      },
+      {
+        id: 'lesson-3-2',
+        title: 'Калории или баланс БЖУ?',
+        description: 'Как связаны калории и баланс БЖУ, что считать и зачем.',
+        duration: '',
+        text: 'Разберёмся, как взаимосвязаны калории и баланс белков, жиров и углеводов, что из этого считать и зачем. PDF с материалом можно скачать ниже.',
+        youtubeUrl: 'https://youtu.be/A7XmH0mp3zg',
+        material: { label: 'Калории или баланс БЖУ? — PDF', url: '/lessons/kalorii-ili-balans-bzhu.pdf' },
+      },
+    ],
   },
   {
     id: 'module-4', number: 4, icon: 'bolt', tone: 'rose', title: 'Тонкости тренировочного процесса',
